@@ -1,100 +1,121 @@
 # UPI: understand, plan, implement 
 
-# Problem 1: Prime Number
-def is_prime(n):
-  count = 2
-  
-  while count < n:
-    if n % count == 0:
-      return False
-    count += 1
+# Problem 1: Pokemon Class
+class Pokemon():
+  def  __init__(self, name, hp, damage):
+    self.name = name
+    self.hp = hp # hit points
+    self.damage = damage # The amount of damage this pokemon does to its opponent every attack
 
-  return True
-
-   
-print(is_prime(5))
-print(is_prime(12))
-print(is_prime(9))
-  
-# Two-Pointer Reverse List
-def reverse_list(lst):
-  pointer1 = 0
-  pointer2 = len(lst) - 1
-  while (pointer1 < pointer2):
-    lst[pointer1],lst[pointer2] = lst[pointer2],lst[pointer1]
-    
-    pointer1 += 1
-    pointer2 -= 1
-    
-  return lst
-print(reverse_list([1,2,3,4,5]))
-
-# Problem 3: Evaluating Solutions
-  # two pointer solution has same time complexity as list slicing solution
-  # two pointer solution has better space complexity then list slicing solution
-
-# Problem 4: Move Even Integers
-def sort_array_by_parity(nums):
-  l = 0
-  r = len(nums) - 1
-  while (l < r):
-    if (nums[l] % 2 != 0 and nums[r] % 2 == 0):
-      nums[l], nums[r] = nums[r], nums[l]
-      l += 1
-      r -= 1
-    if nums[l] % 2 == 0:
-      l += 1
-    if nums[r] % 2 != 0:
-      r -= 1 
-  return nums
-nums = [3,1,2,4]
-nums2 = [1,2,3,4,5,6,7,8,9,10]
-print(sort_array_by_parity(nums))
-print(sort_array_by_parity(nums2))
-
-# Problem 5: Palindrome
-def first_palindrome(words):
-  for word in words:
-    if isPalindrome(word):
-      return word
-  return ''
-  
-def isPalindrome(word):
-  i = 0
-  j = len(word) - 1
-  while i < j:
-    if word[i] != word[j]:
-      return False
-    i += 1
-    j -= 1
-  return True
-  
-words = ["abc","car","ada","racecar","cool"]
-palindrome1 = first_palindrome(words)
-print(palindrome1)
-
-words2 = ["abc","racecar","cool"]
-palindrome2 = first_palindrome(words2)
-print(palindrome2)
-
-words3 = ["abc", "def", "ghi"]
-palindrome3 = first_palindrome(words3)
-print(palindrome3)
-
-# Problem 6: Remove Duplicates with O(1)
-def remove_duplicates(nums):
-  pointer1 = 0
-  pointer2 = 1
-  while pointer2 < len(nums):
-    if (nums[pointer1] == nums[pointer2]):
-      del nums[pointer2]
+  def attack(self, opponent):
+    if (opponent.hp - self.damage <= 0):
+      opponent.hp = 0
+      print(opponent.name + 'fainted')
     else:
-      pointer1 += 1
-      pointer2 += 1
-  return nums
+      opponent.hp -= self.damage
+      print(self.name + ' dealt ' + str(self.damage) + ' damage to ' +  opponent.name)
+    pass
 
-nums = [1,1,2,3,4,4,4,5]
-print(nums)
-print(remove_duplicates(nums))
-print(nums) 
+pikachu = Pokemon("Pikachu", 35, 20)
+bulbasaur = Pokemon("Bulbasaur", 45, 30) 
+
+opponent = bulbasaur
+pikachu.attack(opponent)
+
+# Problem 2: Convert to Linked List
+class Node:
+  def __init__(self, value, next=None):
+    self.value = value
+    self.next = next
+
+def create_linked_list(array):
+  nodes = []
+  for each_element in array:
+    nodes.append(Node(each_element)) #Adds new node to nodes list
+  #Create Linked List
+  for i in range(len(nodes) - 1):
+    nodes[i].next = nodes[i + 1]
+  print_ll(nodes[0])
+
+def print_ll(head):
+  curr = head
+  result = ""
+  while curr:
+    result += curr.value
+    result += ' -> '
+    curr = curr.next
+  result += 'None'
+  print(result)
+
+
+def main():
+  array = ["pikachu", "jigglypuff"]
+  create_linked_list(array)
+
+# Problem 3: Add First
+class Node:
+  def __init__(self, value, next=None):
+    self.value = value
+    self.next = next
+
+def add_first(head, new_node):
+  temp = head
+  head = new_node
+  head.next = temp
+  return head
+
+node_1 = Node(1)
+node_1.next = Node(2)
+print(node_1.value, "->", node_1.next.value)
+
+new_node = Node("Ditto")
+node_1 = add_first(node_1, new_node)
+
+print(node_1.value, "->", node_1.next.value)
+
+# Problem 4: Get Tail
+class Node:
+  def __init__(self, value, next=None):
+    self.value = value
+    self.next = next
+
+def get_tail(head):
+  curr = head
+  if head is None:
+    return None
+  else:
+    while curr.next is not None:
+      curr = curr.next
+  return curr.value
+
+
+# linked list: num1->num2->num3
+num1 = Node("num1")
+head = num1
+head.next = Node("num2")
+head.next.next = Node("num3")
+tail = get_tail(num1)
+print(tail)
+
+# Problem 5: Replace Node
+class Node:
+  def __init__(self, value, next=None):
+    self.value = value
+    self.next = next
+
+def ll_replace(head, original, replacement):
+  current = head
+  while current:
+    if current.value == original:
+      current.value = replacement
+    current = current.next
+
+num3 = Node(5)
+num2 = Node(6, num3)
+num1 = Node(5, num2)
+# initial linked list: 5 -> 6 -> 5
+
+head = num1
+ll_replace(head, 5, "banana")
+print(num1.value, num1.next.value, num1.next.next.value)
 
