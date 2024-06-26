@@ -1,121 +1,158 @@
 # UPI: understand, plan, implement 
 
-# Problem 1: Pokemon Class
-class Pokemon():
-  def  __init__(self, name, hp, damage):
-    self.name = name
-    self.hp = hp # hit points
-    self.damage = damage # The amount of damage this pokemon does to its opponent every attack
-
-  def attack(self, opponent):
-    if (opponent.hp - self.damage <= 0):
-      opponent.hp = 0
-      print(opponent.name + 'fainted')
-    else:
-      opponent.hp -= self.damage
-      print(self.name + ' dealt ' + str(self.damage) + ' damage to ' +  opponent.name)
-    pass
-
-pikachu = Pokemon("Pikachu", 35, 20)
-bulbasaur = Pokemon("Bulbasaur", 45, 30) 
-
-opponent = bulbasaur
-pikachu.attack(opponent)
-
-# Problem 2: Convert to Linked List
+# Problem 1: Nested Constructors
 class Node:
   def __init__(self, value, next=None):
     self.value = value
     self.next = next
 
-def create_linked_list(array):
-  nodes = []
-  for each_element in array:
-    nodes.append(Node(each_element)) #Adds new node to nodes list
-  #Create Linked List
-  for i in range(len(nodes) - 1):
-    nodes[i].next = nodes[i + 1]
-  print_ll(nodes[0])
+head = Node(4,Node(3,Node(2)))
+print(head.value)
+print(head.next.value)
+print(head.next.next.value)
 
-def print_ll(head):
-  curr = head
-  result = ""
-  while curr:
-    result += curr.value
-    result += ' -> '
-    curr = curr.next
-  result += 'None'
-  print(result)
-
-
-def main():
-  array = ["pikachu", "jigglypuff"]
-  create_linked_list(array)
-
-# Problem 3: Add First
+# Problem 2: Find Frequency
 class Node:
   def __init__(self, value, next=None):
     self.value = value
     self.next = next
 
-def add_first(head, new_node):
-  temp = head
-  head = new_node
-  head.next = temp
+def count_element(head, val):
+  current = head
+  counter = 0
+  while current:
+    if current.value == val:
+      counter += 1
+    current = current.next
+  return counter
+
+head = Node(3,Node(1,Node(2,Node(1))))
+print(count_element(head, 1))
+
+# Problem 3: Remove Tail
+class Node:
+  def __init__(self, value=None, next=None):
+      self.value = value
+      self.next = next
+
+
+# Helper function to print the linked list
+def print_list(node):
+  current = node
+  while current:
+      print(current.value, end=" -> " if current.next else "")
+      current = current.next
+  print()
+
+
+# I have a bug! 
+def remove_tail(head):
+  if head is None: # If the list is empty, return None
+      return None
+  if head.next is None: # If there's only one node, removing it leaves the list empty
+      return None 
+
+# Start from the head and find the second-to-last node
+  current = head
+  while current.next.next: 
+      current = current.next
+
+  current.next = None # Remove the last node by setting second-to-last node to None
   return head
 
-node_1 = Node(1)
-node_1.next = Node(2)
-print(node_1.value, "->", node_1.next.value)
+head = Node(1,Node(2,Node(3,Node(4))))
+remove_tail(head)
 
-new_node = Node("Ditto")
-node_1 = add_first(node_1, new_node)
-
-print(node_1.value, "->", node_1.next.value)
-
-# Problem 4: Get Tail
+# Problem 4: Find the Middle
 class Node:
-  def __init__(self, value, next=None):
-    self.value = value
-    self.next = next
+   def __init__(self, value, next=None):
+       self.value = value
+       self.next = next
 
-def get_tail(head):
-  curr = head
-  if head is None:
-    return None
-  else:
-    while curr.next is not None:
-      curr = curr.next
-  return curr.value
+def find_middle_element(head):
+  if not head:
+    return False
 
+  slow = head
+  fast = head
 
-# linked list: num1->num2->num3
-num1 = Node("num1")
-head = num1
-head.next = Node("num2")
-head.next.next = Node("num3")
-tail = get_tail(num1)
-print(tail)
+  while fast and fast.next:
+    slow = slow.next
+    fast = fast.next.next
+    if fast.next is None:
+      return slow.value
+    else:
+      return slow.next.value
 
-# Problem 5: Replace Node
+head = Node(1,Node(2,Node(3,Node(4))))
+print(find_middle_element(head))
+
+# Problem 5: Is Palindrome?
 class Node:
-  def __init__(self, value, next=None):
-    self.value = value
-    self.next = next
+   def __init__(self, value, next=None):
+       self.value = value
+       self.next = next
 
-def ll_replace(head, original, replacement):
+def is_palindrome(head):
+  left = head
   current = head
-  while current:
-    if current.value == original:
-      current.value = replacement
+  length = 1
+  while current.next:
     current = current.next
+    length += 1
+  right = current #tail
 
-num3 = Node(5)
-num2 = Node(6, num3)
-num1 = Node(5, num2)
-# initial linked list: 5 -> 6 -> 5
+  while left != right: 
+    if left.value != right.value:
+      return False
+    else:
+      # reassign right node
+      i = length - 1
+      curr = head
+      right = head
+      while i >= 0:
+        right = curr.next
+        i -= 1
+      # reassign left node 
+      left = left.next  
+  return True
 
-head = num1
-ll_replace(head, 5, "banana")
-print(num1.value, num1.next.value, num1.next.next.value)
+head = Node(1,Node(2,Node(1)))
+print(is_palindrome(head))
+
+head = Node(1,Node(2,Node(2)))
+print(is_palindrome(head))
+
+# Problem 6: Put it in Reverse
+class Node:
+   def __init__(self, value, next=None):
+       self.value = value
+       self.next = next
+
+def reverse(head):
+  left = head
+  current = head
+  length = 1
+  while current.next:
+    current = current.next
+    length += 1
+  right = current
+
+  while left != right and right.next != left:
+    left.value, right.value = right.value, left.value
+    # reassign right node
+    i = length - 1
+    curr = head
+    right = head
+    while i >= 0:
+      right = curr.next
+      i -= 1
+    # reassign left node 
+    left = left.next
+
+  return head
+
+head = Node(1,Node(2,Node(3,Node(4))))
+reverse(head)
+print_list(head)
 
