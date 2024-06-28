@@ -1,158 +1,85 @@
-# UPI: understand, plan, implement 
+# UPI: understand, plan, implement
 
-# Problem 1: Nested Constructors
-class Node:
-  def __init__(self, value, next=None):
-    self.value = value
-    self.next = next
+# Problem 1
+def countdown(n):
+  if n > 0:
+    print(n)
+    countdown(n - 1)
 
-head = Node(4,Node(3,Node(2)))
-print(head.value)
-print(head.next.value)
-print(head.next.next.value)
+print("Problem 1")
+countdown(5)
+print()
 
-# Problem 2: Find Frequency
-class Node:
-  def __init__(self, value, next=None):
-    self.value = value
-    self.next = next
+def countdown_iterative(n):
+  for i in range(n):
+    print(n - i)
 
-def count_element(head, val):
-  current = head
-  counter = 0
-  while current:
-    if current.value == val:
-      counter += 1
-    current = current.next
-  return counter
+countdown_iterative(5)
 
-head = Node(3,Node(1,Node(2,Node(1))))
-print(count_element(head, 1))
+# Problem 2
+def fibonacci(n):
+  if n < 2:
+    return n
+  return fibonacci(n - 1) + fibonacci(n - 2)
+  
+print(fibonacci(6))
 
-# Problem 3: Remove Tail
-class Node:
-  def __init__(self, value=None, next=None):
-      self.value = value
-      self.next = next
+# Problem 3
+def list_product(lst):
+  if not lst: 
+    return 1
+  return lst[-1] * list_product(lst[:-1])
 
+print(list_product([1, 2, 3, 4, 5]))
 
-# Helper function to print the linked list
-def print_list(node):
-  current = node
-  while current:
-      print(current.value, end=" -> " if current.next else "")
-      current = current.next
-  print()
+# Problem 4
+def is_power_of_four(n):
+  if n == 1:
+    return True
+  return is_power_of_four(n // 4) if n % 4 == 0 else False
 
+print(is_power_of_four(16))
 
-# I have a bug! 
-def remove_tail(head):
-  if head is None: # If the list is empty, return None
-      return None
-  if head.next is None: # If there's only one node, removing it leaves the list empty
-      return None 
+# Problem 5
+def binary_search_recursive(arr, target, left, right):
+  if left > right:
+      return -1  # Base case: target not found within bounds
 
-# Start from the head and find the second-to-last node
-  current = head
-  while current.next.next: 
-      current = current.next
+  # find middle index of list
+  mid = (left + right) // 2
 
-  current.next = None # Remove the last node by setting second-to-last node to None
-  return head
+  # If the middle element is the target, return its index
+  if arr[mid] == target:
+      return mid
+  # If the target is less than the middle element, search the left half
+  elif arr[mid] > target:
+      return binary_search_recursive(arr, target, left, mid - 1)
+  # If the target is greater than the middle element, search the right half
+  else:
+      return binary_search_recursive(arr, target, mid + 1, right)
 
-head = Node(1,Node(2,Node(3,Node(4))))
-remove_tail(head)
+def binary_search_iterative(arr, target):
+  left = 0
+  right = len(arr) - 1
 
-# Problem 4: Find the Middle
-class Node:
-   def __init__(self, value, next=None):
-       self.value = value
-       self.next = next
-
-def find_middle_element(head):
-  if not head:
-    return False
-
-  slow = head
-  fast = head
-
-  while fast and fast.next:
-    slow = slow.next
-    fast = fast.next.next
-    if fast.next is None:
-      return slow.value
+  while left <= right:
+    middle = (left + right) // 2
+    if arr[middle] == target:
+      return middle
+    elif arr[middle] > target:
+      right = middle - 1
     else:
-      return slow.next.value
+      left = middle + 1
+  return -1
+  
+print(binary_search_iterative([1, 3, 5, 7, 9, 11, 13, 15], 5))
 
-head = Node(1,Node(2,Node(3,Node(4))))
-print(find_middle_element(head))
+# Time complexities for both recursive and iterative is O(log n). Space complexity for iterative is O(1), for recurive is O(log n)
 
-# Problem 5: Is Palindrome?
-class Node:
-   def __init__(self, value, next=None):
-       self.value = value
-       self.next = next
+# Problem 6
+def find_ceiling(lst, x):
+  if lst[-1] <= x:
+    return lst[-1]
+  return find_ceiling(lst[:-1], x)
 
-def is_palindrome(head):
-  left = head
-  current = head
-  length = 1
-  while current.next:
-    current = current.next
-    length += 1
-  right = current #tail
-
-  while left != right: 
-    if left.value != right.value:
-      return False
-    else:
-      # reassign right node
-      i = length - 1
-      curr = head
-      right = head
-      while i >= 0:
-        right = curr.next
-        i -= 1
-      # reassign left node 
-      left = left.next  
-  return True
-
-head = Node(1,Node(2,Node(1)))
-print(is_palindrome(head))
-
-head = Node(1,Node(2,Node(2)))
-print(is_palindrome(head))
-
-# Problem 6: Put it in Reverse
-class Node:
-   def __init__(self, value, next=None):
-       self.value = value
-       self.next = next
-
-def reverse(head):
-  left = head
-  current = head
-  length = 1
-  while current.next:
-    current = current.next
-    length += 1
-  right = current
-
-  while left != right and right.next != left:
-    left.value, right.value = right.value, left.value
-    # reassign right node
-    i = length - 1
-    curr = head
-    right = head
-    while i >= 0:
-      right = curr.next
-      i -= 1
-    # reassign left node 
-    left = left.next
-
-  return head
-
-head = Node(1,Node(2,Node(3,Node(4))))
-reverse(head)
-print_list(head)
-
+print(find_ceiling([1, 3, 5, 7, 9, 10, 13, 15], 11))
