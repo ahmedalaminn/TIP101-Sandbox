@@ -1,74 +1,131 @@
-class TreeNode:
-  def __init__(self, val, left=None, right=None):
-      self.val = val
-      self.left = left
-      self.right = right
-
+class TreeNode():
+   def __init__(self, value, left=None, right=None):
+       self.val = value
+       self.left = left
+       self.right = right
+     
 # Problem 1
-tree = TreeNode(5, TreeNode(5), TreeNode(1))
+def is_univalued(root):
+  if not root:
+    return False
+    
+  root_val = root.val
+  
+  def dfs(root):
+    if not root:
+      return True
+    elif root.val != root_val:
+      return False
+    else:
+      return dfs(root.left) and dfs(root.right)
+
+  return dfs(root)
+
+root = TreeNode(5, TreeNode(5, TreeNode(5)), TreeNode(5))
+print(is_univalued(root))
 
 # Problem 2
-def check_tree(root):
-  #Check if a root has a value for its left and right children along with itself 
-  return root.val == (root.left.val * root.right.val)
-print(check_tree(tree))
+def height(root):
+  if not root:
+    return 0
+  return 1 + max(height(root.left), height(root.right))
+
+print(height(root))
 
 # Problem 3
-def check_tree_2(root):
-  if not root or not root.left or not root.right:
-      return False
-  return root.val == (root.left.val * root.right.val)
+class TreeNode():
+   def __init__(self, key, value, left=None, right=None):
+       self.key = key
+       self.val = value
+       self.left = left
+       self.right = right
 
-tree = TreeNode(5, TreeNode(1), TreeNode(5))
-print(check_tree_2(tree))
+def insert(root, key, value):
+  if root:
+    if key > root.key:
+      if root.right:
+        return insert(root.right, key, value)
+      else:
+        root.right = TreeNode(key, value)
+    elif key < root.key:
+      if root.left:
+        return insert(root.left, key, value)
+      else:
+        root.left = TreeNode(key, value)
+    else:
+        root.val = value
+  return root
+
+root = TreeNode(10, 'Ahmed', TreeNode(9, 'Cat'), TreeNode(11, 'Dog'))
+insert(root, 10, 'Zhanna')
+print(root.val)
 
 # Problem 4
-def right_most(root):
-  curr = root
-  while curr.right:
-      curr = curr.right
-  return curr.val
+def remove_bst(root, key):
+  
+  def inorder_successor(root):
+    curr = root
+    while curr.left: 
+      curr = curr.left
+    return curr
 
-tree = TreeNode(1, TreeNode(2), TreeNode(3, TreeNode(4), TreeNode(5)))
-print(right_most(tree))
+  if root is None:
+    return root
+  elif key < root.key:
+    root.left = remove_bst(root.left, key)
+  elif key > root.key:
+    root.right = remove_best(root.right, key)
+  else:
+    # Case 1: Node with no children (leaf node)
+    if root.left is None and root.right is None:
+        return None
+    # Case 2: Node with only one child
+    elif root.left is None:
+        return root.right
+    elif root.right is None:
+        return root.left
+    # Case 3: Node with two children
+    else:
+        temp = inorder_successor(root.right)
+        root.key = temp.key
+        root.right = remove_bst(root.right, temp.key)
+      
+    return root
 
 # Problem 5
-def right_most_rec(root):
-  if not root.right:
-      return root.val
-  return right_most_rec(root.right)
-
-print(right_most_rec(tree))
+def inorder_successor(root, current):
+  if current:
+    return None
+  elif current.right: # if node has right subtree
+    curr = current.right
+    while curr.left: 
+      curr = curr.left
+    return curr
+  else: # if node doesn't have right subtree
+    inorder_successor = None
+    curr = root
+    while curr != current:
+      if curr.key > current.key:
+        inorder_successor = curr
+        curr = curr.left
+      else:
+        curr = curr.right
+        
+    return curr
 
 # Problem 6
-def postorder_traversal(root):
-  list = []
-  traverse(root, list)
-  return list
-
-def traverse(root, list):
-  if not root:
-      return list
+def merge_trees(self, root1, root2):
+  if not root1 and not root2:
+    return None
+  elif not root1: 
+    return root2
+  elif not root2: 
+    return root1
   else:
-      traverse(root.left, list)
-      traverse(root.right, list)
-      list.append(root.val)
+    merged = TreeNode(root1.val + root2.val)
+    merged.left = merge_trees(root1.left, root2.left)
+    merged.right = merge_trees(root2.right, root2.right)
+  return merged
+    
 
-print(postorder_traversal(tree))
-
-# Problem 7
-def product_tree(root):
-  value = 1
-  return product_traverse(root, value)
-
-def product_traverse(root, value):
-  if not root:
-      return value
-  else:
-      l = product_traverse(root.left, value)
-      r = product_traverse(root.right, value)
-      value *= root.val * l * r 
-  return value
-
-tree2 = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(5))
-print(product_tree(tree2))                                            
+    
