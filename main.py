@@ -23,7 +23,6 @@ def is_symmetric(root):
 
   return True
 
-
 root = TreeNode(1)
 root.left = TreeNode(2)
 root.left.left = TreeNode(3)
@@ -60,7 +59,6 @@ def binary_tree_paths(root):
 
 print(binary_tree_paths(root))
 
-
 # Problem 3
 def min_diff_in_bst(root):
   def dfs(root, values):
@@ -80,7 +78,6 @@ def min_diff_in_bst(root):
       if diff < min_diff:
           min_diff = diff
   return min_diff
-
 
 root = TreeNode(1)
 root.left = TreeNode(0)
