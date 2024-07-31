@@ -1,134 +1,161 @@
-from collections import deque
-class TreeNode:
-  def __init__(self, val=0, left=None, right=None):
-    self.val = val
-    self.left = left
-    self.right = right
-    
 # Problem 1
-def is_symmetric(root):
-  if root is None:
+from collections import defaultdict
+
+def is_valid(s):
+  hashmap = {')': '(', '}': '{', ']': '['}
+  stack = []
+  for i in s:
+    if i in hashmap:
+      if hashmap[i] != stack.pop():
+        return False
+    else:
+      stack.append(i)
+
+  if not stack:
     return True
-    
-  queue = deque([(root.left, root.right)])
-  while queue:
-    left, right = queue.popleft()
-    if not left and not right:
-      continue
-    if not left or not right or left.val != right.val:
-      return False
-
-    queue.append((left.left, right.right))
-    queue.append((left.right, right.left))
-
-  return True
-
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.left.left = TreeNode(3)
-root.left.right = TreeNode(4)
-
-root.right = TreeNode(2)
-root.right.left = TreeNode(4)
-root.right.right = TreeNode(3)
-
-print(is_symmetric(root))
-#       1
-#     /   \
-#    /     \
-#   2       2
-#  / \     / \
-# 3   4   4   3
+  
+  return False
+  
+s = "()"
+print(is_valid(s))
+s = "()[]{}"
+print(is_valid(s))
+s = "()[]{}"
+print(is_valid(s))
+s = "(]"
+print(is_valid(s))
 
 # Problem 2
-def binary_tree_paths(root):
-  paths = []
+def max_profit(prices):
+  slow = 0 
+  fast = slow + 1
+  max_profit = 0
+  
+  while slow < len(prices):
+    if fast >= len(prices):
+      slow += 1
+      fast = slow + 1
+    else:
+      if prices[fast] > prices[slow] and prices[fast] - prices[slow] > max_profit:
+        max_profit = prices[fast] - prices[slow]
+      fast += 1
 
-  def dfs_helper(node, path):
-    if node is not None:
-      path.append(node.val)
-      if not node.left and not node.right:
-        paths.append(list(path))
-      else:
-        dfs_helper(node.left, path)
-        dfs_helper(node.right, path)
-      path.pop()
+  return max_profit
 
-  dfs_helper(root, [])
-  return paths
-
-print(binary_tree_paths(root))
+prices = [7,1,5,3,6,4]
+print(max_profit(prices))
+prices = [7,6,4,3,1]
+print(max_profit(prices))
 
 # Problem 3
-def min_diff_in_bst(root):
-  def dfs(root, values):
-    if not root:
-      return values
-    values.append(root.val)
-    dfs(root.right, values)
-    dfs(root.left, values)
-    
-  values = []
-  dfs(root, values)
-  
-  values = sorted(values)
-  min_diff = float('inf')
-  for i in range(len(values) - 1):
-      diff = abs(values[i + 1] - values[i])
-      if diff < min_diff:
-          min_diff = diff
-  return min_diff
+class Node:
+  def __init__(self, value, next=None):
+    self.value = value
+    self.next = next
 
-root = TreeNode(1)
-root.left = TreeNode(0)
-root.right = TreeNode(48)
-root.right.left = TreeNode(12)
-root.right.right = TreeNode(49)
-print(min_diff_in_bst(root))
+def shuffle_merge(head_a, head_b):
+  start_node = Node(value = None)
+  current = start_node
+  
+  while head_a and head_b:
+    current.next = head_a
+    head_a = head_a.next
+    current = current.next
+
+    current.next = head_b
+    head_b = head_b.next
+    current = current.next
+
+  if head_a:
+    current.next = head_a
+
+  if head_b:
+    current.next = head_b
+
+    
+  return start_node.next
+  
+root1 = Node(1)
+root1.next = Node(2)
+root1.next.next = Node(3)
+root2 = Node(4)
+root2.next = Node(5)
+root2.next.next = Node(6)
+
+new_node = shuffle_merge(root1, root2)
+current = new_node
+while current.next:
+  print(current.value, end = "->")
+  current = current.next
+print(current.value)
 
 # Problem 4
-def increasing_bst(root):
-  def inorder(node, values):
-      if not node:
-          return
-      inorder(node.left, values)
-      values.append(node.val)
-      inorder(node.right, values)
+def group_anagrams(strs):
+  res = defaultdict(list)
 
-  values = []
-  inorder(root, values)
-  
-  root = TreeNode(values[0])
-  curr = root
+  for word in strs:
+    hashmap = [0] * 26
 
-  for val in values[1:]:
-      curr.right = TreeNode(val)
-      curr = curr.right
-  return root
+    for character in word:
+      if character in hashmap:
+        hashmap[ord(character) - ord('a')] += 1
+      else:
+        hashmap[ord(character) - ord('a')] = 1
 
-new_root = increasing_bst(root)
+    res[tuple(hashmap)].append(word)
+     
+  return res.values()
 
-curr = new_root
-while curr:
-  print(curr.val, end = ' ')
-  curr = curr.right
-print()
+strs = ["eat","tea","tan","ate","nat","bat"]
+lst = group_anagrams(strs)
+res = []
+for i in lst:
+  res.append(i)
+print(res)
+
+strs = [""]
+lst = group_anagrams(strs)
+res = []
+for i in lst:
+  res.append(i)
+print(res)
+
+strs = ["a"]
+lst = group_anagrams(strs)
+res = []
+for i in lst:
+  res.append(i)
+print(res)
 
 # Problem 5
-def can_split(root):
-  def dfs_counter(root):
+class TreeNode(object):
+  def __init__(self, val=0, left=None, right=None):
+      self.val = val
+      self.left = left
+      self.right = right
+
+def sum_numbers(root):
+  lst = []
+  def dfs(root, string = ''):
     if root is None:
-      return 0
-    return 1 + dfs_counter(root.left) + dfs_counter(root.right)
-
-  return dfs_counter(root.left) == dfs_counter(root.right)
-  
-root = TreeNode(1)
-root.left = TreeNode(0)
-root.left.right = TreeNode(2)
-root.right = TreeNode(48)
-root.right.right = TreeNode(49)
-print(can_split(root))
-
-  
+      return lst.append(string) #yeppp!!
+    else:
+      string += str(root.val) 
+    dfs(root.left, string)
+    dfs(root.right, string)
     
+  dfs(root)
+  return sum(int(path) for path in lst) // 2
+# the problem can be fixed with just halving!!!!! lmaaaao ig that works hahahhaa goodnight! goodnight
+# lets go!! Thanks guys!
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+print(sum_numbers(root))
+
+root = TreeNode(4)
+root.left = TreeNode(9)
+root.left.left = TreeNode(5)
+root.left.right = TreeNode(1)
+root.right = TreeNode(0)
+print(sum_numbers(root))
