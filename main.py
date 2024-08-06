@@ -1,161 +1,128 @@
 # Problem 1
-from collections import defaultdict
+def can_place_flowers(flowerbed, n):
+  if len(flowerbed) < n:
+    return False
 
-def is_valid(s):
-  hashmap = {')': '(', '}': '{', ']': '['}
-  stack = []
-  for i in s:
-    if i in hashmap:
-      if hashmap[i] != stack.pop():
-        return False
-    else:
-      stack.append(i)
+  i = 0
+  while i + 1 <= len(flowerbed) and n > 0:
+    if i == 0:
+      if flowerbed[i] == 0 and flowerbed[i+1] == 0:
+        flowerbed[i] = 1
+        n -= 1
+    elif flowerbed[i-1] == 0 and flowerbed[i] == 0 and flowerbed[i+1] == 0:
+      flowerbed[i] = 1
+      n -= 1
+    i += 1
 
-  if not stack:
+  if flowerbed[-1] == 0 and flowerbed[-2] == 0:
+    flowerbed[-1] = 1
+    n -= 1
+  if n <= 0:
     return True
-  
   return False
-  
-s = "()"
-print(is_valid(s))
-s = "()[]{}"
-print(is_valid(s))
-s = "()[]{}"
-print(is_valid(s))
-s = "(]"
-print(is_valid(s))
 
+flowerbed = [1,0,0,0,1]
+print(can_place_flowers(flowerbed, 1))
+flowerbed = [1,0,0,0,1]
+print(can_place_flowers(flowerbed, 2))
+    
 # Problem 2
-def max_profit(prices):
-  slow = 0 
-  fast = slow + 1
-  max_profit = 0
-  
-  while slow < len(prices):
-    if fast >= len(prices):
-      slow += 1
-      fast = slow + 1
-    else:
-      if prices[fast] > prices[slow] and prices[fast] - prices[slow] > max_profit:
-        max_profit = prices[fast] - prices[slow]
-      fast += 1
-
-  return max_profit
-
-prices = [7,1,5,3,6,4]
-print(max_profit(prices))
-prices = [7,6,4,3,1]
-print(max_profit(prices))
-
-# Problem 3
 class Node:
   def __init__(self, value, next=None):
     self.value = value
     self.next = next
 
-def shuffle_merge(head_a, head_b):
-  start_node = Node(value = None)
-  current = start_node
-  
-  while head_a and head_b:
-    current.next = head_a
-    head_a = head_a.next
-    current = current.next
+def reverse(head):
+  current = head
+  prev = None
+  while current:
+    nxt = current.next
+    current.next = prev
+    prev = current
+    current = nxt
+  return prev
 
-    current.next = head_b
-    head_b = head_b.next
-    current = current.next
+def print_ll(head):
+  while head:
+    if head.next:
+      print(head.value, end = '->')
+    else:
+      print(head.value)
+    head = head.next
 
-  if head_a:
-    current.next = head_a
 
-  if head_b:
-    current.next = head_b
+node_1 = Node(1, Node(2, Node(3, Node(4))))
+print_ll(node_1)
 
-    
-  return start_node.next
-  
-root1 = Node(1)
-root1.next = Node(2)
-root1.next.next = Node(3)
-root2 = Node(4)
-root2.next = Node(5)
-root2.next.next = Node(6)
+new_head = reverse(node_1)
+print_ll(new_head)
 
-new_node = shuffle_merge(root1, root2)
-current = new_node
-while current.next:
-  print(current.value, end = "->")
-  current = current.next
-print(current.value)
+# Problem 3
+def valid_word_abbreviation(word, abbr):
+  word_index = 0
+  abbr_index = 0
+
+  while word_index < len(word) and abbr_index < len(abbr):
+    if abbr[abbr_index].isdigit():
+      if abbr[abbr_index] == '0':
+        return False
+      num = ''
+      while abbr_index < len(abbr) and abbr[abbr_index].isdigit():
+        num += abbr[abbr_index]
+        abbr_index += 1
+      num = int(num)
+      word_index += num
+    else:
+      if word[word_index] != abbr[abbr_index]:
+        return False #makes sure they are in the same place index wise
+      word_index += 1
+      abbr_index += 1
+  return word_index == len(word) and abbr_index == len(abbr)
+
+word = "internationalization"
+abbr = "i12iz4n"
+print(valid_word_abbreviation(word, abbr))
+word = "apple"
+abbr = "a2e"
+print(valid_word_abbreviation(word, abbr))
+# alr gn 
+#W, lowkey pulled that out my ass, glad it worked, nice working with yall, peace
 
 # Problem 4
-def group_anagrams(strs):
-  res = defaultdict(list)
-
-  for word in strs:
-    hashmap = [0] * 26
-
-    for character in word:
-      if character in hashmap:
-        hashmap[ord(character) - ord('a')] += 1
-      else:
-        hashmap[ord(character) - ord('a')] = 1
-
-    res[tuple(hashmap)].append(word)
-     
-  return res.values()
-
-strs = ["eat","tea","tan","ate","nat","bat"]
-lst = group_anagrams(strs)
-res = []
-for i in lst:
-  res.append(i)
-print(res)
-
-strs = [""]
-lst = group_anagrams(strs)
-res = []
-for i in lst:
-  res.append(i)
-print(res)
-
-strs = ["a"]
-lst = group_anagrams(strs)
-res = []
-for i in lst:
-  res.append(i)
-print(res)
-
-# Problem 5
-class TreeNode(object):
+class TreeNode:
   def __init__(self, val=0, left=None, right=None):
       self.val = val
       self.left = left
       self.right = right
 
-def sum_numbers(root):
-  lst = []
-  def dfs(root, string = ''):
+def check_root_sum(root):
+  def helper(root):
     if root is None:
-      return lst.append(string) #yeppp!!
-    else:
-      string += str(root.val) 
-    dfs(root.left, string)
-    dfs(root.right, string)
-    
-  dfs(root)
-  return sum(int(path) for path in lst) // 2
-# the problem can be fixed with just halving!!!!! lmaaaao ig that works hahahhaa goodnight! goodnight
-# lets go!! Thanks guys!
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-print(sum_numbers(root))
+      return 0
+    return root.val + helper(root.left) + helper(root.right)
+  sum = helper(root) - root.val
 
-root = TreeNode(4)
-root.left = TreeNode(9)
-root.left.left = TreeNode(5)
-root.left.right = TreeNode(1)
-root.right = TreeNode(0)
-print(sum_numbers(root))
+  return True if sum == root.val else False
+
+root = TreeNode(14, TreeNode(4, TreeNode(3), TreeNode(1)), TreeNode(6))
+print(check_root_sum(root))
+
+# Problem 5
+def max_area(height):
+  maximum = 0
+  left = 0
+  right = 1
+  while left < len(height):
+    if right >= len(height):
+      left += 1
+      right = left + 1
+    else:
+      length = right - left 
+      width = min(height[left], height[right])
+      if maximum < length*width:
+        maximum = length*width
+      right += 1
+  return maximum 
+      
+print(max_area([1,8,6,2,5,4,8,3,7]))
+print(max_area([1,1]))
