@@ -1,128 +1,110 @@
 # Problem 1
-def can_place_flowers(flowerbed, n):
-  if len(flowerbed) < n:
-    return False
+def climb_stairs(n):
+  if n == 0 or n == 1:
+    return 1
+  else:
+   return climb_stairs(n-2) + climb_stairs(n-1)
 
-  i = 0
-  while i + 1 <= len(flowerbed) and n > 0:
-    if i == 0:
-      if flowerbed[i] == 0 and flowerbed[i+1] == 0:
-        flowerbed[i] = 1
-        n -= 1
-    elif flowerbed[i-1] == 0 and flowerbed[i] == 0 and flowerbed[i+1] == 0:
-      flowerbed[i] = 1
-      n -= 1
-    i += 1
+print(climb_stairs(2))
 
-  if flowerbed[-1] == 0 and flowerbed[-2] == 0:
-    flowerbed[-1] = 1
-    n -= 1
-  if n <= 0:
-    return True
-  return False
-
-flowerbed = [1,0,0,0,1]
-print(can_place_flowers(flowerbed, 1))
-flowerbed = [1,0,0,0,1]
-print(can_place_flowers(flowerbed, 2))
-    
 # Problem 2
-class Node:
-  def __init__(self, value, next=None):
-    self.value = value
-    self.next = next
+def find_error_nums(nums):
+  i = 0
+  j = 1
+  while j < len(nums):
+    if nums[i] == nums[j]:
+      return [nums[i], nums[j] + 1]
+    i += 1
+    j += 1
 
-def reverse(head):
-  current = head
-  prev = None
-  while current:
-    nxt = current.next
-    current.next = prev
-    prev = current
-    current = nxt
-  return prev
-
-def print_ll(head):
-  while head:
-    if head.next:
-      print(head.value, end = '->')
-    else:
-      print(head.value)
-    head = head.next
-
-
-node_1 = Node(1, Node(2, Node(3, Node(4))))
-print_ll(node_1)
-
-new_head = reverse(node_1)
-print_ll(new_head)
+print(find_error_nums([1,1]))
 
 # Problem 3
-def valid_word_abbreviation(word, abbr):
-  word_index = 0
-  abbr_index = 0
+class Node:
+  def __init__(self, val=0, next=None):
+      self.value = val
+      self.next = next
 
-  while word_index < len(word) and abbr_index < len(abbr):
-    if abbr[abbr_index].isdigit():
-      if abbr[abbr_index] == '0':
-        return False
-      num = ''
-      while abbr_index < len(abbr) and abbr[abbr_index].isdigit():
-        num += abbr[abbr_index]
-        abbr_index += 1
-      num = int(num)
-      word_index += num
+def delete_nodes(head, m, n):
+  curr = head
+  prev = curr
+  M = 0 # keeping
+  N = 0 # deleting
+  while curr.next:
+    while curr.next and M < m:
+      M += 1
+      prev = curr
+      curr = curr.next 
+
+    while curr.next and N < n:
+      N += 1
+      curr = curr.next
+
+    prev.next = curr
+    M = 0
+    N = 0
+  return head
+  
+head = Node(1)
+curr = head
+i = 2
+while (i <= 13):
+  curr.next = Node(i)
+  curr = curr.next
+  i += 1
+
+def printlink(head):
+  curr = head
+  while curr:
+    if not curr.next: 
+      print(curr.value)
     else:
-      if word[word_index] != abbr[abbr_index]:
-        return False #makes sure they are in the same place index wise
-      word_index += 1
-      abbr_index += 1
-  return word_index == len(word) and abbr_index == len(abbr)
+      print(curr.value, end = "->")
+    curr = curr.next
 
-word = "internationalization"
-abbr = "i12iz4n"
-print(valid_word_abbreviation(word, abbr))
-word = "apple"
-abbr = "a2e"
-print(valid_word_abbreviation(word, abbr))
-# alr gn 
-#W, lowkey pulled that out my ass, glad it worked, nice working with yall, peace
+printlink(head)
+head = delete_nodes(head, 2, 3)
+printlink(head)
 
 # Problem 4
 class TreeNode:
-  def __init__(self, val=0, left=None, right=None):
-      self.val = val
+  def __init__(self, value=0, left=None, right=None):
+      self.val = value
       self.left = left
       self.right = right
-
-def check_root_sum(root):
-  def helper(root):
-    if root is None:
+    
+def get_diameter(root):
+  diameter = 0
+  def dfs(root):
+    nonlocal diameter
+    if not root:
       return 0
-    return root.val + helper(root.left) + helper(root.right)
-  sum = helper(root) - root.val
+    left = dfs(root.left)
+    right = dfs(root.right)
+    diameter = max(diameter, left + right)
+    return max(left, right) + 1
+    
+  return dfs(root)
+    
 
-  return True if sum == root.val else False
-
-root = TreeNode(14, TreeNode(4, TreeNode(3), TreeNode(1)), TreeNode(6))
-print(check_root_sum(root))
+root = TreeNode(1, TreeNode(2, TreeNode(4), TreeNode(5)), TreeNode(3))
+print(get_diameter(root))
+#     1
+#    / \
+#   2   3
+#  / \  
+# 4   5
 
 # Problem 5
-def max_area(height):
-  maximum = 0
+def two_sum(numbers, target):
   left = 0
-  right = 1
-  while left < len(height):
-    if right >= len(height):
+  right = left + 1
+  while left < len(numbers):
+    if right >= len(numbers):
       left += 1
       right = left + 1
-    else:
-      length = right - left 
-      width = min(height[left], height[right])
-      if maximum < length*width:
-        maximum = length*width
-      right += 1
-  return maximum 
-      
-print(max_area([1,8,6,2,5,4,8,3,7]))
-print(max_area([1,1]))
+    if numbers[left] + numbers[right] == target:
+      return [left, right]
+    right += 1
+
+print(two_sum([1,2,3,4], 3))
